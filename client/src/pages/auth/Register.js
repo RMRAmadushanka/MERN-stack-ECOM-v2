@@ -1,22 +1,35 @@
 import React, { useState } from "react";
-import { auth } from "../../firebase";
+import {auth} from '../../firebase'
 import { toast } from "react-toastify";
+import { sendSignInLinkToEmail } from "firebase/auth";
 
 const Register = () => {
   const [email, setEmail] = useState("");
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const config = {
-      url: "http://localhost:3000/register/complete",
+    const actionCodeSettings = {
+      url: `http://localhost:3000/register/complete`,
       handleCodeInApp: true,
     };
 
-    await auth.sendSignInLinkToEmail(email, config);
-    toast.success(
-      `Email is sent to ${email}. Click the link to complete your registration`
-    );
-    window.localStorage.setItem("emailForRegistration", email);
-    setEmail("")
+    await sendSignInLinkToEmail(auth, email, actionCodeSettings)
+      .then(() => {
+        console.log("CALL");
+        // The link was successfully sent. Inform the user.
+        // Save the email locally so you don't need to ask the user for it again
+        // if they open the link on the same device.
+        toast.success(
+          `Email is sent to ${email}. Click the link to complete your registration`
+        );
+        window.localStorage.setItem("emailForRegistration", email);
+
+        // ...
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // ...
+      });
   };
   const registerForm = () => (
     <form onSubmit={handleSubmit}>

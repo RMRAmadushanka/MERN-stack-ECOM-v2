@@ -1,8 +1,5 @@
-// import * as firebase from "firebase";
-import firebase from "firebase/compat/app";
-import "firebase/compat/auth";
+import { getAuth } from "firebase/auth";
 import { initializeApp } from "firebase/app";
-
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyCYVafKQ9O6MLLbnpvAs4JvKiG8pgrWJjY",
@@ -14,9 +11,8 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-// firebase.initializeApp(firebaseConfig);
-firebase.initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 
-// export
-export const auth = firebase.auth();
-export const googleAuthProvider = new firebase.auth.GoogleAuthProvider();
+const auth = getAuth(app);
+
+export {auth}
