@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { auth } from "../../firebase";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { signInWithEmailLink } from "firebase/auth";
+import { signInWithEmailLink, updatePassword } from "firebase/auth";
 
 const RegisterComplete = () => {
   const [email, setEmail] = useState("");
@@ -46,8 +46,9 @@ const RegisterComplete = () => {
       // Clear email from storage.
      
         window.localStorage.removeItem("emailForRegistration");
-        let user =await user.currentUser;
-        user.updatePassword(password);
+     
+        const user = await auth.currentUser;
+        await updatePassword(user, password);
         const idTokenResult = await user.getIdTokenResult();
         navigate("/");
      
