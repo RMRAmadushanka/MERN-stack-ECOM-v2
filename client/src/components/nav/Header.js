@@ -9,14 +9,26 @@ import {
 import { Menu } from "antd";
 import "./Header.css";
 import SubMenu from "antd/es/menu/SubMenu";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
+import { useDispatch } from "react-redux";
+import { auth } from "../../firebase";
+import { removeUser } from "../../store/thunks/removeUser";
 
 const Header = () => {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
   const [current, setCurrent] = useState("mail");
   const handleClick = (e) => {
     console.log("click ", e);
     setCurrent(e.key);
   };
+
+  const logout = () =>{
+    auth.signOut()
+    dispatch(removeUser())
+    navigate('/')
+  }
   return (
     <Menu onClick={handleClick} selectedKeys={[current]} mode="horizontal">
       <Menu.Item key="Home" icon={<AppstoreOutlined />}>
@@ -34,7 +46,7 @@ const Header = () => {
       </Menu.Item>
       <SubMenu icon={<SettingOutlined />} title="Username">
         <Menu.Item key="setting:1">Option 1</Menu.Item>
-        <Menu.Item key="setting:2">Option 2</Menu.Item>
+        <Menu.Item key="setting:2" onClick={logout}>Logout</Menu.Item>
       </SubMenu>
     </Menu>
   );
