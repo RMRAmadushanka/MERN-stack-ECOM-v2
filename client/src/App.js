@@ -16,6 +16,7 @@ function App() {
         dispatch(fetchUsers(userData))
       }
     })
+    return ()=> unsubscribe
   },[])
   return (
     <>
