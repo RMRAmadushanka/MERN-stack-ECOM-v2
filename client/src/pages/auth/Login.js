@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { auth } from "../../firebase";
 import { toast } from "react-toastify";
 import {
@@ -10,14 +10,21 @@ import {
 import { Button } from "antd";
 import { MailOutlined, GoogleOutlined } from "@ant-design/icons";
 import { fetchUsers } from "../../store/thunks/fetchUsers";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const { data } = useSelector((state) => {
+    return state.users;
+  });
+  useEffect(() => {
+    if (data && data.token) navigate("/");
+  }, [data]);
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -114,6 +121,7 @@ const Login = () => {
           {loading ? <h4>loading...</h4> : <h4>Login</h4>}
           {LoginForm()}
           {googleLoginButton()}
+          <Link to="/forgot/password" className="float-right text-danger">Forgot password</Link>
         </div>
       </div>
     </div>

@@ -15,6 +15,7 @@ import Login from "./pages/auth/Login";
 import RegisterComplete from "./pages/auth/RegisterComplete";
 import { Provider } from "react-redux";
 import { store } from "./store";
+import ForgotPassword from "./pages/auth/ForgotPassword";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -23,6 +24,7 @@ const router = createBrowserRouter(
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register/complete" element={<RegisterComplete />} />
+      <Route path="/forgot/password" element={<ForgotPassword />} />
     </Route>
   )
 );
