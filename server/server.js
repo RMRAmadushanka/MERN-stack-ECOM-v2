@@ -8,7 +8,6 @@ import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import bodyParser from "body-parser";
 
-
 //Create app
 const app = express()
 
