@@ -12,6 +12,20 @@ import { MailOutlined, GoogleOutlined } from "@ant-design/icons";
 import { fetchUsers } from "../../store/thunks/fetchUsers";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+
+const createOrUpdateUser = async (authToken) => {
+  return await axios.post(
+    'http://localhost:4000/api/create-or-update-user',
+    {},
+    {
+      headers: {
+        authToken,
+      },
+    }
+  );
+};
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -36,6 +50,7 @@ const Login = () => {
         console.log(user);
 
         const idTokenResult = await user.getIdTokenResult();
+        await createOrUpdateUser(idTokenResult.token).then().catch();
         dispatch(fetchUsers({ email: user.email, token: idTokenResult.token }));
         navigate("/");
         setLoading(false);
@@ -47,25 +62,22 @@ const Login = () => {
   };
   const provider = new GoogleAuthProvider();
 
-  const googleLogin = async() => {
-
-   await signInWithPopup(auth, provider)
-  .then(async(result) => {
-  
-    // The signed-in user info.
-    const user = result.user;
-    // IdP data available using getAdditionalUserInfo(result)
-    // ...
-    const idTokenResult = await user.getIdTokenResult();
-    dispatch(fetchUsers({ email: user.email, token: idTokenResult.token }));
-    navigate("/");
-
-  }).catch((error) => {
-    setLoading(false);
-    toast.error(error.message);
-  });
-
-
+  const googleLogin = async () => {
+    await signInWithPopup(auth, provider)
+      .then(async (result) => {
+        // The signed-in user info.
+        const user = result.user;
+        // IdP data available using getAdditionalUserInfo(result)
+        // ...
+        const idTokenResult = await user.getIdTokenResult();
+        await createOrUpdateUser(idTokenResult.token).then().catch();
+        dispatch(fetchUsers({ email: user.email, token: idTokenResult.token }));
+        navigate("/");
+      })
+      .catch((error) => {
+        setLoading(false);
+        toast.error(error.message);
+      });
   };
   const LoginForm = () => (
     <form onSubmit={handleSubmit}>
@@ -109,7 +121,6 @@ const Login = () => {
       shape="round"
       icon={<GoogleOutlined />}
       size="large"
-   
     >
       Login with email and password
     </Button>
@@ -121,7 +132,9 @@ const Login = () => {
           {loading ? <h4>loading...</h4> : <h4>Login</h4>}
           {LoginForm()}
           {googleLoginButton()}
-          <Link to="/forgot/password" className="float-right text-danger">Forgot password</Link>
+          <Link to="/forgot/password" className="float-right text-danger">
+            Forgot password
+          </Link>
         </div>
       </div>
     </div>
