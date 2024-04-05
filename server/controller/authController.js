@@ -12,7 +12,7 @@ const createOrUpdateUser = async (req, res) => {
   } else {
     const newUser = await new User({
       email,
-      name,
+      name: email.split("@")[0],
       picture,
     }).save();
     res.json(newUser);

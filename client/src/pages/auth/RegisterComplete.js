@@ -3,12 +3,24 @@ import { auth } from "../../firebase";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { signInWithEmailLink, updatePassword } from "firebase/auth";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUsers } from "../../store/thunks/fetchUsers";
+import { createOrUpdateUser } from "../../Hooks/useCreateOrUpdateUser";
+
+
+
 
 const RegisterComplete = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const { data } = useSelector((state) => {
+    return state.users;
+  });
+
 
   useEffect(() => {
     setEmail(window.localStorage.getItem("emailForRegistration"));
@@ -50,6 +62,10 @@ const RegisterComplete = () => {
         const user = await auth.currentUser;
         await updatePassword(user, password);
         const idTokenResult = await user.getIdTokenResult();
+        await createOrUpdateUser(idTokenResult.token).then((res)=>{
+          dispatch(fetchUsers ({ name:res.data.name,email: res.data.email, token: idTokenResult.token, role:res.data.role, _id:res.data._id }));
+          navigate("/");
+        }).catch();
         navigate("/");
      
     })

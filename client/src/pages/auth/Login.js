@@ -12,19 +12,10 @@ import { MailOutlined, GoogleOutlined } from "@ant-design/icons";
 import { fetchUsers } from "../../store/thunks/fetchUsers";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { createOrUpdateUser } from "../../Hooks/useCreateOrUpdateUser";
 
-const createOrUpdateUser = async (authToken) => {
-  return await axios.post(
-    'http://localhost:4000/api/create-or-update-user',
-    {},
-    {
-      headers: {
-        authToken,
-      },
-    }
-  );
-};
+
+
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -50,9 +41,10 @@ const Login = () => {
         console.log(user);
 
         const idTokenResult = await user.getIdTokenResult();
-        await createOrUpdateUser(idTokenResult.token).then().catch();
-        dispatch(fetchUsers({ email: user.email, token: idTokenResult.token }));
-        navigate("/");
+        await createOrUpdateUser(idTokenResult.token).then((res)=>{
+          dispatch(fetchUsers({ name:res.data.name,email: res.data.email, token: idTokenResult.token, role:res.data.role, _id:res.data._id }));
+          navigate("/");
+        }).catch();
         setLoading(false);
       })
       .catch((error) => {
@@ -70,9 +62,11 @@ const Login = () => {
         // IdP data available using getAdditionalUserInfo(result)
         // ...
         const idTokenResult = await user.getIdTokenResult();
-        await createOrUpdateUser(idTokenResult.token).then().catch();
-        dispatch(fetchUsers({ email: user.email, token: idTokenResult.token }));
-        navigate("/");
+        await createOrUpdateUser(idTokenResult.token).then((res)=>{
+          dispatch(fetchUsers({ name:res.data.name,email: res.data.email, token: idTokenResult.token, role:res.data.role, _id:res.data._id }));
+          navigate("/");
+        }).catch();
+        
       })
       .catch((error) => {
         setLoading(false);
