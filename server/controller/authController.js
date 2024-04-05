@@ -19,4 +19,17 @@ const createOrUpdateUser = async (req, res) => {
   }
 };
 
-export { createOrUpdateUser };
+const currentUser = async (req, res) => {
+    
+  User.findOne({ email: req.user.email })
+    .then((res) => {
+        console.log(res);
+        res.json();
+    })
+    .catch((err) => {
+      res.status(401).json({
+        err: "Invalid or expired token",
+      });
+    });
+};
+export { createOrUpdateUser, currentUser };

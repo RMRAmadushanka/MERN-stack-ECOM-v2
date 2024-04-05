@@ -1,6 +1,7 @@
 import { firebaseAdminApp } from "../firebase/index.js";
 
 const authCheck = async (req, res, next) => {
+  console.log("req.headers.authtoken",req.headers.authtoken);
   try {
     const decodedToken = await firebaseAdminApp
       .auth()
